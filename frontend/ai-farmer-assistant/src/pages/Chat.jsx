@@ -1,0 +1,171 @@
+import { useState, useRef, useEffect } from 'react';
+import { motion } from 'framer-motion';
+import { HiOutlinePaperAirplane } from 'react-icons/hi2';
+import { GiWheat } from 'react-icons/gi';
+import MessageBubble from '../components/MessageBubble';
+import VoiceButton from '../components/VoiceButton';
+import LoadingDots from '../components/LoadingDots';
+import useVoiceInput from '../hooks/useVoiceInput';
+import { aiChat } from '../services/api';
+import toast from 'react-hot-toast';
+
+const suggestedQuestions = [
+  'How to treat yellow leaves in wheat?',
+  'How to grow tomatoes at home?',
+  'How to control pests in rice?',
+  'How to make organic compost?',
+];
+
+const Chat = () => {
+  const [messages, setMessages] = useState([
+    {
+      text: 'Hello! 🙏 I am your AI Agriculture Assistant. Ask me any farming question — I\'ll give you practical advice in simple Hindi.',
+      isUser: false,
+    },
+  ]);
+  const [input, setInput] = useState('');
+  const [loading, setLoading] = useState(false);
+  const messagesEndRef = useRef(null);
+  const inputRef = useRef(null);
+  const { isListening, transcript, startListening, stopListening, setTranscript } = useVoiceInput();
+
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  }, [messages, loading]);
+
+  useEffect(() => {
+    if (transcript) {
+      setInput(transcript);
+      setTranscript('');
+    }
+  }, [transcript]);
+
+  const sendMessage = async (text = input) => {
+    if (!text.trim() || loading) return;
+
+    const userMessage = text.trim();
+    setInput('');
+    setMessages((prev) => [...prev, { text: userMessage, isUser: true }]);
+    setLoading(true);
+
+    try {
+      const res = await aiChat(userMessage);
+      setMessages((prev) => [...prev, { text: res.data.data.message, isUser: false }]);
+    } catch (err) {
+      toast.error('Failed to get response. Please try again.');
+      setMessages((prev) => [
+        ...prev,
+        { text: 'Sorry, something went wrong. Please try again. 🙏', isUser: false },
+      ]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleKeyDown = (e) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      sendMessage();
+    }
+  };
+
+  return (
+    <div className="flex flex-col h-[calc(100vh-2rem)] md:h-[calc(100vh-4rem)] max-w-4xl mx-auto p-2 md:p-4">
+      {/* Header */}
+      <div className="flex items-center gap-3 pb-4 border-b border-surface-200">
+        <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary-500 to-primary-700 flex items-center justify-center shadow-md">
+          <GiWheat className="w-5 h-5 text-white" />
+        </div>
+        <div>
+          <h1 className="text-lg font-bold text-surface-900">AI Farm Chat</h1>
+          <p className="text-xs text-surface-400">Ask any farming question</p>
+        </div>
+        <div className="ml-auto flex items-center gap-1.5">
+          <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
+          <span className="text-xs text-surface-400">Online</span>
+        </div>
+      </div>
+
+      {/* Messages area */}
+      <div className="flex-1 overflow-y-auto py-4 space-y-4">
+        {messages.map((msg, i) => (
+          <MessageBubble key={i} message={msg.text} isUser={msg.isUser} />
+        ))}
+        {loading && (
+          <div className="flex gap-3">
+            <div className="w-8 h-8 rounded-full bg-gradient-to-br from-primary-400 to-primary-600 flex items-center justify-center flex-shrink-0">
+              <GiWheat className="w-4 h-4 text-white" />
+            </div>
+            <div className="bg-white border border-surface-200 rounded-2xl rounded-tl-sm px-4 py-3">
+              <LoadingDots />
+            </div>
+          </div>
+        )}
+        <div ref={messagesEndRef} />
+      </div>
+
+      {/* Suggested questions */}
+      {messages.length <= 1 && (
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="flex flex-wrap gap-2 pb-3"
+        >
+          {suggestedQuestions.map((q, i) => (
+            <button
+              key={i}
+              onClick={() => sendMessage(q)}
+              className="px-3 py-1.5 text-xs bg-primary-50 text-primary-700 border border-primary-100 rounded-full hover:bg-primary-100 transition-colors"
+            >
+              {q}
+            </button>
+          ))}
+        </motion.div>
+      )}
+
+      {/* Input area */}
+      <div className="pt-3 border-t border-surface-200">
+        {isListening && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="flex items-center gap-2 text-red-500 text-xs mb-2"
+          >
+            <div className="w-2 h-2 rounded-full bg-red-500 animate-pulse" />
+            Listening... speak in Hindi
+          </motion.div>
+        )}
+        <div className="flex items-end gap-2">
+          <VoiceButton
+            isListening={isListening}
+            onStart={startListening}
+            onStop={stopListening}
+          />
+          <div className="flex-1 relative">
+            <textarea
+              id="chat-input"
+              ref={inputRef}
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
+              onKeyDown={handleKeyDown}
+              placeholder="Type your question here..."
+              rows={1}
+              className="w-full px-4 py-3 bg-white border border-surface-200 rounded-xl resize-none focus:outline-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500 text-sm transition-all"
+              style={{ maxHeight: '120px' }}
+            />
+          </div>
+          <motion.button
+            whileTap={{ scale: 0.9 }}
+            onClick={() => sendMessage()}
+            disabled={!input.trim() || loading}
+            className="p-3 bg-primary-600 hover:bg-primary-700 disabled:bg-surface-200 disabled:text-surface-400 text-white rounded-xl transition-all shadow-md shadow-primary-600/20 disabled:shadow-none"
+          >
+            <HiOutlinePaperAirplane className="w-5 h-5" />
+          </motion.button>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default Chat;
