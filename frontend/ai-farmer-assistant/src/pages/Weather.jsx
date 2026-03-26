@@ -7,7 +7,7 @@ import { getWeather, getWeatherAdvice } from '../services/api';
 import LoadingDots from '../components/LoadingDots';
 import toast from 'react-hot-toast';
 
-const popularCities = ['Delhi', 'Mumbai', 'Lucknow', 'Jaipur', 'Patna', 'Bhopal', 'Chandigarh', 'Hyderabad'];
+const popularCities = ['Durg', 'Bhilai', 'Raipur', 'Bilaspur', 'Nagpur', 'Bhopal', 'Delhi', 'Mumbai'];
 
 const Weather = () => {
   const [city, setCity] = useState('');
