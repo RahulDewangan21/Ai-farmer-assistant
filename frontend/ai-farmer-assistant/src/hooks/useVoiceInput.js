@@ -7,7 +7,7 @@ const useVoiceInput = () => {
 
   const startListening = useCallback(() => {
     if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
-      alert('आपका ब्राउज़र voice input सपोर्ट नहीं करता। कृपया Chrome का उपयोग करें।');
+      alert('Speech Recognition not supported in this browser. Please use Chrome browser.');
       return;
     }
 

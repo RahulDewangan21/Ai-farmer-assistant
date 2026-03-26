@@ -1,29 +1,48 @@
-import axios from 'axios';
+import axios from "axios";
 
 /**
- * Fetch current weather data from OpenWeather API
+ * Get weather data (current + forecast) using OpenWeather ONLY
  */
-export const getWeatherData = async (city = 'Delhi') => {
+export const getWeatherData = async (city = "Delhi") => {
   try {
     const apiKey = process.env.OPENWEATHER_API_KEY;
-    const url = `https://api.openweathermap.org/data/2.5/weather?q=${encodeURIComponent(city)},IN&units=metric&appid=${apiKey}`;
 
-    const response = await axios.get(url);
-    const data = response.data;
+    // ✅ CURRENT WEATHER
+    const currentRes = await axios.get(
+      `https://api.openweathermap.org/data/2.5/weather?q=${encodeURIComponent(city)},IN&units=metric&appid=${apiKey}`
+    );
+
+    // ✅ FORECAST (5 DAYS)
+    const forecastRes = await axios.get(
+      `https://api.openweathermap.org/data/2.5/forecast?q=${encodeURIComponent(city)},IN&units=metric&appid=${apiKey}`
+    );
+
+    const current = currentRes.data;
+    const forecast = forecastRes.data;
 
     return {
-      temp: Math.round(data.main.temp),
-      feelsLike: Math.round(data.main.feels_like),
-      humidity: data.main.humidity,
-      description: data.weather[0].description,
-      icon: data.weather[0].icon,
-      windSpeed: data.wind.speed,
-      pressure: data.main.pressure,
-      city: data.name,
-      country: data.sys.country,
+      city: current.name,
+      country: current.sys.country,
+
+      current: {
+        temp: Math.round(current.main.temp),
+        feelsLike: Math.round(current.main.feels_like),
+        humidity: current.main.humidity,
+        description: current.weather[0].description,
+        windSpeed: current.wind.speed,
+      },
+
+      forecast: forecast.list.slice(0, 5).map((item) => ({
+        date: item.dt_txt,
+        temp: Math.round(item.main.temp),
+        humidity: item.main.humidity,
+        description: item.weather[0].description,
+      })),
     };
+
   } catch (error) {
-    console.error('Weather API Error:', error.message);
-    throw new Error('Unable to fetch weather data. Please check city name and try again.');
+    console.error("Weather Error:", error.response?.data || error.message);
+
+    throw new Error("Unable to fetch weather data");
   }
 };

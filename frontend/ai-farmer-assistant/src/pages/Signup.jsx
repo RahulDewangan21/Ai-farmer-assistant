@@ -53,27 +53,27 @@ const Signup = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-surface-50 flex items-center justify-center px-4 py-8">
+    <div className="min-h-screen bg-surface-50 flex items-center justify-center px-4 py-6 sm:py-8">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         className="w-full max-w-md"
       >
-        <div className="text-center mb-8">
+        <div className="text-center mb-6 sm:mb-8">
           <Link to="/" className="inline-flex items-center gap-3 mb-4">
-            <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-primary-500 to-primary-700 flex items-center justify-center shadow-lg shadow-primary-500/20">
-              <GiWheat className="w-7 h-7 text-white" />
+            <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-xl bg-gradient-to-br from-primary-500 to-primary-700 flex items-center justify-center shadow-lg shadow-primary-500/20">
+              <GiWheat className="w-6 h-6 sm:w-7 sm:h-7 text-white" />
             </div>
           </Link>
-          <h1 className="text-2xl font-bold text-surface-900">Create Account</h1>
-          <p className="text-surface-500 mt-1">Sign up for free and start using AI assistant</p>
+          <h1 className="text-xl sm:text-2xl font-bold text-surface-900">Create Account</h1>
+          <p className="text-surface-500 mt-1 text-sm">Sign up for free and start using AI assistant</p>
         </div>
 
-        <div className="bg-white border border-surface-200 rounded-2xl p-8 shadow-sm">
-          <form onSubmit={handleSubmit} className="space-y-4">
+        <div className="bg-white border border-surface-200 rounded-2xl p-5 sm:p-8 shadow-sm">
+          <form onSubmit={handleSubmit} className="space-y-3 sm:space-y-4">
             {fields.map((field) => (
               <div key={field.name}>
-                <label className="block text-sm font-medium text-surface-700 mb-1.5">{field.label}</label>
+                <label className="block text-sm font-medium text-surface-700 mb-1 sm:mb-1.5">{field.label}</label>
                 <div className="relative">
                   <field.icon className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-surface-400" />
                   <input
@@ -84,14 +84,14 @@ const Signup = () => {
                     onChange={handleChange}
                     placeholder={field.placeholder}
                     required={field.required}
-                    className="w-full pl-10 pr-4 py-3 rounded-xl bg-surface-50 border border-surface-200 text-surface-900 placeholder:text-surface-400 focus:outline-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500 transition-all text-sm"
+                    className="w-full pl-10 pr-4 py-2.5 sm:py-3 rounded-xl bg-surface-50 border border-surface-200 text-surface-900 placeholder:text-surface-400 focus:outline-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500 transition-all text-sm"
                   />
                 </div>
               </div>
             ))}
 
             <div>
-              <label className="block text-sm font-medium text-surface-700 mb-1.5">Password</label>
+              <label className="block text-sm font-medium text-surface-700 mb-1 sm:mb-1.5">Password</label>
               <div className="relative">
                 <HiOutlineLockClosed className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-surface-400" />
                 <input
@@ -102,7 +102,7 @@ const Signup = () => {
                   onChange={handleChange}
                   placeholder="At least 6 characters"
                   required
-                  className="w-full pl-10 pr-12 py-3 rounded-xl bg-surface-50 border border-surface-200 text-surface-900 placeholder:text-surface-400 focus:outline-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500 transition-all text-sm"
+                  className="w-full pl-10 pr-12 py-2.5 sm:py-3 rounded-xl bg-surface-50 border border-surface-200 text-surface-900 placeholder:text-surface-400 focus:outline-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500 transition-all text-sm"
                 />
                 <button
                   type="button"
@@ -118,7 +118,7 @@ const Signup = () => {
               id="signup-submit"
               type="submit"
               disabled={loading}
-              className="w-full py-3 bg-primary-600 hover:bg-primary-700 disabled:opacity-50 disabled:cursor-not-allowed rounded-xl text-white font-semibold transition-all shadow-md shadow-primary-600/20 mt-2"
+              className="w-full py-2.5 sm:py-3 bg-primary-600 hover:bg-primary-700 disabled:opacity-50 disabled:cursor-not-allowed rounded-xl text-white font-semibold transition-all shadow-md shadow-primary-600/20 mt-1 sm:mt-2 text-sm sm:text-base"
             >
               {loading ? (
                 <span className="flex items-center justify-center gap-2">
@@ -132,7 +132,7 @@ const Signup = () => {
           </form>
         </div>
 
-        <p className="text-center mt-6 text-surface-500 text-sm">
+        <p className="text-center mt-5 sm:mt-6 text-surface-500 text-sm">
           Already have an account?{' '}
           <Link to="/login" className="text-primary-600 hover:text-primary-700 font-medium">
             Log In

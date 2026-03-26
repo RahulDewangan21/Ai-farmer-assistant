@@ -4,21 +4,29 @@ import History from '../models/History.js';
 // POST /api/ai/chat
 export const chat = async (req, res) => {
   try {
+    console.log("REQ BODY:", req.body);
+    console.log("USER:", req.user);
+
     const { message } = req.body;
 
     if (!message || !message.trim()) {
-      return res.status(400).json({ success: false, message: 'Message is required.' });
+      return res.status(400).json({
+        success: false,
+        message: 'Message is required.',
+      });
     }
 
     const aiResponse = await chatWithGemini(message);
 
-    // Save to history
-    await History.create({
-      userId: req.user._id,
-      type: 'chat',
-      input: message,
-      response: aiResponse,
-    });
+    // Save only if user exists
+    if (req.user?._id) {
+      await History.create({
+        userId: req.user._id,
+        type: 'chat',
+        input: message,
+        response: aiResponse,
+      });
+    }
 
     res.json({
       success: true,
@@ -26,8 +34,13 @@ export const chat = async (req, res) => {
         message: aiResponse,
       },
     });
+
   } catch (error) {
-    res.status(500).json({ success: false, message: error.message });
+    console.error("CHAT ERROR FULL:", error);
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
   }
 };
 

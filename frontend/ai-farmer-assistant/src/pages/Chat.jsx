@@ -19,7 +19,7 @@ const suggestedQuestions = [
 const Chat = () => {
   const [messages, setMessages] = useState([
     {
-      text: 'Hello! 🙏 I am your AI Agriculture Assistant. Ask me any farming question — I\'ll give you practical advice in simple Hindi.',
+      text: 'Hello! 🙏 I am your AI Agriculture Assistant. Ask me any farming question — I\'ll give you practical advice in simple English/Hindi.',
       isUser: false,
     },
   ]);
@@ -70,33 +70,33 @@ const Chat = () => {
   };
 
   return (
-    <div className="flex flex-col h-[calc(100vh-2rem)] md:h-[calc(100vh-4rem)] max-w-4xl mx-auto p-2 md:p-4">
+    <div className="flex flex-col h-[calc(100vh-3.5rem)] lg:h-screen max-w-4xl mx-auto p-3 sm:p-4">
       {/* Header */}
-      <div className="flex items-center gap-3 pb-4 border-b border-surface-200">
-        <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary-500 to-primary-700 flex items-center justify-center shadow-md">
-          <GiWheat className="w-5 h-5 text-white" />
+      <div className="flex items-center gap-3 pb-3 sm:pb-4 border-b border-surface-200">
+        <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-gradient-to-br from-primary-500 to-primary-700 flex items-center justify-center shadow-md flex-shrink-0">
+          <GiWheat className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
         </div>
-        <div>
-          <h1 className="text-lg font-bold text-surface-900">AI Farm Chat</h1>
+        <div className="min-w-0">
+          <h1 className="text-base sm:text-lg font-bold text-surface-900">AI Farm Chat</h1>
           <p className="text-xs text-surface-400">Ask any farming question</p>
         </div>
-        <div className="ml-auto flex items-center gap-1.5">
+        <div className="ml-auto flex items-center gap-1.5 flex-shrink-0">
           <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
-          <span className="text-xs text-surface-400">Online</span>
+          <span className="text-xs text-surface-400 hidden sm:inline">Online</span>
         </div>
       </div>
 
       {/* Messages area */}
-      <div className="flex-1 overflow-y-auto py-4 space-y-4">
+      <div className="flex-1 overflow-y-auto py-3 sm:py-4 space-y-3 sm:space-y-4">
         {messages.map((msg, i) => (
           <MessageBubble key={i} message={msg.text} isUser={msg.isUser} />
         ))}
         {loading && (
-          <div className="flex gap-3">
-            <div className="w-8 h-8 rounded-full bg-gradient-to-br from-primary-400 to-primary-600 flex items-center justify-center flex-shrink-0">
-              <GiWheat className="w-4 h-4 text-white" />
+          <div className="flex gap-2 sm:gap-3">
+            <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-gradient-to-br from-primary-400 to-primary-600 flex items-center justify-center flex-shrink-0">
+              <GiWheat className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-white" />
             </div>
-            <div className="bg-white border border-surface-200 rounded-2xl rounded-tl-sm px-4 py-3">
+            <div className="bg-white border border-surface-200 rounded-2xl rounded-tl-sm px-3 sm:px-4 py-2.5 sm:py-3">
               <LoadingDots />
             </div>
           </div>
@@ -109,13 +109,13 @@ const Chat = () => {
         <motion.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
-          className="flex flex-wrap gap-2 pb-3"
+          className="flex flex-wrap gap-1.5 sm:gap-2 pb-2 sm:pb-3"
         >
           {suggestedQuestions.map((q, i) => (
             <button
               key={i}
               onClick={() => sendMessage(q)}
-              className="px-3 py-1.5 text-xs bg-primary-50 text-primary-700 border border-primary-100 rounded-full hover:bg-primary-100 transition-colors"
+              className="px-2.5 sm:px-3 py-1 sm:py-1.5 text-[11px] sm:text-xs bg-primary-50 text-primary-700 border border-primary-100 rounded-full hover:bg-primary-100 transition-colors"
             >
               {q}
             </button>
@@ -124,7 +124,7 @@ const Chat = () => {
       )}
 
       {/* Input area */}
-      <div className="pt-3 border-t border-surface-200">
+      <div className="pt-2 sm:pt-3 border-t border-surface-200">
         {isListening && (
           <motion.div
             initial={{ opacity: 0 }}
@@ -141,7 +141,7 @@ const Chat = () => {
             onStart={startListening}
             onStop={stopListening}
           />
-          <div className="flex-1 relative">
+          <div className="flex-1 min-w-0">
             <textarea
               id="chat-input"
               ref={inputRef}
@@ -150,7 +150,7 @@ const Chat = () => {
               onKeyDown={handleKeyDown}
               placeholder="Type your question here..."
               rows={1}
-              className="w-full px-4 py-3 bg-white border border-surface-200 rounded-xl resize-none focus:outline-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500 text-sm transition-all"
+              className="w-full px-3 sm:px-4 py-2.5 sm:py-3 bg-white border border-surface-200 rounded-xl resize-none focus:outline-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500 text-sm transition-all"
               style={{ maxHeight: '120px' }}
             />
           </div>
@@ -158,7 +158,7 @@ const Chat = () => {
             whileTap={{ scale: 0.9 }}
             onClick={() => sendMessage()}
             disabled={!input.trim() || loading}
-            className="p-3 bg-primary-600 hover:bg-primary-700 disabled:bg-surface-200 disabled:text-surface-400 text-white rounded-xl transition-all shadow-md shadow-primary-600/20 disabled:shadow-none"
+            className="p-2.5 sm:p-3 bg-primary-600 hover:bg-primary-700 disabled:bg-surface-200 disabled:text-surface-400 text-white rounded-xl transition-all shadow-md shadow-primary-600/20 disabled:shadow-none flex-shrink-0"
           >
             <HiOutlinePaperAirplane className="w-5 h-5" />
           </motion.button>
