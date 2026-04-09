@@ -28,7 +28,7 @@ const Profile = () => {
     try {
       await updateProfile(form);
       setEditing(false);
-      toast.success('Profile updated! ✅');
+      toast.success('Profile updated!');
     } catch (err) {
       toast.error('Failed to update profile');
     } finally {

@@ -54,7 +54,7 @@ const Upload = () => {
     try {
       const res = await aiImageAnalysis(image.data, image.mimeType);
       setAnalysis(res.data.data.analysis);
-      toast.success('Analysis complete! ✅');
+      toast.success('Analysis complete!');
     } catch (err) {
       toast.error('Analysis failed. Please try again.');
     } finally {

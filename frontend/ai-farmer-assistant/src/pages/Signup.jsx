@@ -36,7 +36,7 @@ const Signup = () => {
     setLoading(true);
     try {
       await signup(form.name, form.email, form.password, form.phone, form.location);
-      toast.success('Account created! 🎉');
+      toast.success('Account created');
       navigate('/dashboard');
     } catch (err) {
       toast.error(err.response?.data?.message || 'Signup failed');

@@ -72,7 +72,7 @@ const Sidebar = () => {
                 <GiWheat className="w-6 h-6 text-white" />
               </div>
               <div className="min-w-0">
-                <h1 className="text-lg font-bold text-surface-900 truncate">AI Farmer</h1>
+                <h1 className="text-lg font-bold text-surface-900 truncate">AgroGenAI</h1>
                 <p className="text-xs text-surface-400">Smart Assistant</p>
               </div>
             </div>

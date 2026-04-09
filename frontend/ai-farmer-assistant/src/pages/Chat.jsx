@@ -19,7 +19,7 @@ const suggestedQuestions = [
 const Chat = () => {
   const [messages, setMessages] = useState([
     {
-      text: 'Hello! 🙏 I am your AI Agriculture Assistant. Ask me any farming question — I\'ll give you practical advice in simple English/Hindi.',
+      text: 'Hello! I am your AI Agriculture Assistant. Ask me any farming question — I\'ll give you practical advice in simple English/Hindi.',
       isUser: false,
     },
   ]);

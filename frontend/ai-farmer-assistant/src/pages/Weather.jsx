@@ -32,7 +32,7 @@ const Weather = () => {
 
       setWeatherData(res.data.data); // ✅ fixed
 
-      toast.success('Weather data loaded! ☀️');
+      toast.success('Weather data loaded');
     } catch (err) {
       console.error(err);
       toast.error('Could not fetch weather data.');
