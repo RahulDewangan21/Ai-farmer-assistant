@@ -1,5 +1,6 @@
 import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
+import { LanguageProvider } from './context/LanguageContext';
 import { Toaster } from 'react-hot-toast';
 import ProtectedRoute from './components/ProtectedRoute';
 import Sidebar from './components/Sidebar';
@@ -12,6 +13,7 @@ import Dashboard from './pages/Dashboard';
 import Chat from './pages/Chat';
 import Upload from './pages/Upload';
 import Weather from './pages/Weather';
+import CropAdvisory from './pages/CropAdvisory';
 import History from './pages/History';
 import Profile from './pages/Profile';
 
@@ -68,6 +70,14 @@ const AppRoutes = () => {
         }
       />
       <Route
+        path="/crop-advisory"
+        element={
+          <ProtectedRoute>
+            <DashboardLayout><CropAdvisory /></DashboardLayout>
+          </ProtectedRoute>
+        }
+      />
+      <Route
         path="/history"
         element={
           <ProtectedRoute>
@@ -91,27 +101,29 @@ function App() {
   return (
     <Router>
       <AuthProvider>
-        <Toaster
-          position="top-right"
-          toastOptions={{
-            duration: 3000,
-            style: {
-              background: '#ffffff',
-              color: '#0f172a',
-              borderRadius: '12px',
-              fontSize: '14px',
-              border: '1px solid #e2e8f0',
-              boxShadow: '0 4px 12px rgba(0,0,0,0.08)',
-            },
-            success: {
-              iconTheme: { primary: '#16a34a', secondary: '#fff' },
-            },
-            error: {
-              iconTheme: { primary: '#ef4444', secondary: '#fff' },
-            },
-          }}
-        />
-        <AppRoutes />
+        <LanguageProvider>
+          <Toaster
+            position="top-right"
+            toastOptions={{
+              duration: 3000,
+              style: {
+                background: '#ffffff',
+                color: '#0f172a',
+                borderRadius: '12px',
+                fontSize: '14px',
+                border: '1px solid #e2e8f0',
+                boxShadow: '0 4px 12px rgba(0,0,0,0.08)',
+              },
+              success: {
+                iconTheme: { primary: '#16a34a', secondary: '#fff' },
+              },
+              error: {
+                iconTheme: { primary: '#ef4444', secondary: '#fff' },
+              },
+            }}
+          />
+          <AppRoutes />
+        </LanguageProvider>
       </AuthProvider>
     </Router>
   );

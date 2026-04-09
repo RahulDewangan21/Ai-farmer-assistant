@@ -14,9 +14,19 @@ const getGenAI = () => {
 };
 
 /**
+ * Get language instruction string
+ */
+const getLangInstruction = (language) => {
+  if (language === 'hi') {
+    return '- Answer in Hindi (Devanagari script)\n- Use simple Hindi that farmers can understand';
+  }
+  return '- Answer in simple and clear English';
+};
+
+/**
  * Chat with Gemini — DETAILED + STRUCTURED RESPONSE
  */
-export const chatWithGemini = async (userMessage) => {
+export const chatWithGemini = async (userMessage, language = 'en') => {
   try {
     const ai = getGenAI();
 
@@ -27,7 +37,7 @@ You are an expert Indian agriculture advisor.
 
 Instructions:
 - Answer in 15–20 lines
-- Use simple and clear English
+${getLangInstruction(language)}
 - Use headings with this format: ### Heading
 - Use bullet points under headings
 - Make it practical for farmers
@@ -42,7 +52,7 @@ Format:
 Question: ${userMessage}
 `,
       generationConfig: {
-        maxOutputTokens: 400,
+        maxOutputTokens: 500,
         temperature: 0.5,
       },
     });
@@ -58,7 +68,7 @@ Question: ${userMessage}
 /**
  * Analyze crop image — DETAILED STRUCTURED
  */
-export const analyzeImageWithGemini = async (base64Image, mimeType = 'image/jpeg') => {
+export const analyzeImageWithGemini = async (base64Image, mimeType = 'image/jpeg', language = 'en') => {
   try {
     const ai = getGenAI();
 
@@ -80,7 +90,7 @@ Analyze this crop image and respond in structured format:
 ### Treatment
 ### Prevention Tips
 
-- Use simple English
+${getLangInstruction(language)}
 - Keep answer 15–20 lines
 - Use bullet points
 `,
@@ -95,7 +105,7 @@ Analyze this crop image and respond in structured format:
         },
       ],
       generationConfig: {
-        maxOutputTokens: 450,
+        maxOutputTokens: 500,
         temperature: 0.4,
       },
     });
@@ -111,7 +121,7 @@ Analyze this crop image and respond in structured format:
 /**
  * Weather-based farming advice — STRUCTURED
  */
-export const getWeatherAdvice = async (weatherData, location) => {
+export const getWeatherAdvice = async (weatherData, location, language = 'en') => {
   try {
     const ai = getGenAI();
 
@@ -133,12 +143,12 @@ Provide advice in structured format:
 ### Crop Protection
 ### Do's and Don'ts
 
-- Use simple English
+${getLangInstruction(language)}
 - 12–18 lines
 - Bullet points preferred
 `,
       generationConfig: {
-        maxOutputTokens: 300,
+        maxOutputTokens: 400,
         temperature: 0.5,
       },
     });
@@ -148,5 +158,71 @@ Provide advice in structured format:
   } catch (error) {
     console.error('Gemini Weather Error:', error);
     throw new Error('Weather advice service unavailable.');
+  }
+};
+
+/**
+ * Crop Advisory — recommend crops based on weather + season
+ */
+export const getCropAdvisory = async (weatherData, location, month, language = 'en') => {
+  try {
+    const ai = getGenAI();
+
+    const seasonMap = {
+      1: 'Rabi (Winter)', 2: 'Rabi (Winter)', 3: 'Rabi (Spring)',
+      4: 'Zaid (Summer)', 5: 'Zaid (Summer)', 6: 'Kharif (Monsoon)',
+      7: 'Kharif (Monsoon)', 8: 'Kharif (Monsoon)', 9: 'Kharif (Monsoon)',
+      10: 'Rabi (Autumn)', 11: 'Rabi (Winter)', 12: 'Rabi (Winter)',
+    };
+    const season = seasonMap[month] || 'Unknown';
+
+    const response = await ai.models.generateContent({
+      model: "gemini-2.5-flash",
+      contents: `
+You are an expert Indian agriculture advisor specializing in crop planning.
+
+Current Data:
+- Location: ${location}
+- Month: ${month} (${season} season)
+- Temperature: ${weatherData.temp}°C
+- Humidity: ${weatherData.humidity}%
+- Weather Condition: ${weatherData.description}
+
+Based on the above weather, season, and region, recommend the BEST crops to grow RIGHT NOW.
+
+Respond in this structured format:
+
+### 🌾 Current Season: ${season}
+
+### ✅ Recommended Crops (Top 5-6)
+For each crop provide:
+- Crop name
+- Why suitable for this weather/season
+- Expected sowing period
+- Expected harvest time
+- Key tip
+
+### 🌱 Soil Preparation Tips
+
+### ⚠️ Crops to Avoid This Season
+
+### 💡 Pro Tips for ${location} Farmers
+
+${getLangInstruction(language)}
+- Keep answer 25–35 lines
+- Use bullet points
+- Be specific to the region and current weather
+`,
+      generationConfig: {
+        maxOutputTokens: 700,
+        temperature: 0.5,
+      },
+    });
+
+    return response.text;
+
+  } catch (error) {
+    console.error('Gemini Crop Advisory Error:', error);
+    throw new Error('Crop advisory service unavailable.');
   }
 };

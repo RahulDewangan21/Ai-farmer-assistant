@@ -8,7 +8,7 @@ const historySchema = new mongoose.Schema({
   },
   type: {
     type: String,
-    enum: ['chat', 'image', 'weather'],
+    enum: ['chat', 'image', 'weather', 'crop-advisory'],
     required: true,
   },
   input: {

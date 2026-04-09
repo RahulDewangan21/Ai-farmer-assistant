@@ -13,13 +13,14 @@ import {
   HiOutlineXMark,
   HiOutlineSun,
 } from 'react-icons/hi2';
-import { GiWheat } from 'react-icons/gi';
+import { GiWheat, GiPlantSeed } from 'react-icons/gi';
 
 const navItems = [
   { path: '/dashboard', label: 'Dashboard', icon: HiOutlineHome },
   { path: '/chat', label: 'AI Chat', icon: HiOutlineChatBubbleLeftRight },
   { path: '/upload', label: 'Crop Check', icon: HiOutlinePhoto },
   { path: '/weather', label: 'Weather Advice', icon: HiOutlineSun },
+  { path: '/crop-advisory', label: 'Crop Advisory', icon: GiPlantSeed },
   { path: '/history', label: 'History', icon: HiOutlineClock },
   { path: '/profile', label: 'Profile', icon: HiOutlineUser },
 ];

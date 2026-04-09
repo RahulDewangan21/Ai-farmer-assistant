@@ -4,22 +4,36 @@ import { HiOutlinePaperAirplane } from 'react-icons/hi2';
 import { GiWheat } from 'react-icons/gi';
 import MessageBubble from '../components/MessageBubble';
 import VoiceButton from '../components/VoiceButton';
+import LanguageSelector from '../components/LanguageSelector';
 import LoadingDots from '../components/LoadingDots';
 import useVoiceInput from '../hooks/useVoiceInput';
+import useTextToSpeech from '../hooks/useTextToSpeech';
+import { useLanguage } from '../context/LanguageContext';
 import { aiChat } from '../services/api';
 import toast from 'react-hot-toast';
 
-const suggestedQuestions = [
-  'How to treat yellow leaves in wheat?',
-  'How to grow tomatoes at home?',
-  'How to control pests in rice?',
-  'How to make organic compost?',
-];
+const suggestedQuestions = {
+  en: [
+    'How to treat yellow leaves in wheat?',
+    'How to grow tomatoes at home?',
+    'How to control pests in rice?',
+    'How to make organic compost?',
+  ],
+  hi: [
+    'गेहूं में पीले पत्तों का इलाज कैसे करें?',
+    'घर पर टमाटर कैसे उगाएं?',
+    'धान में कीटों को कैसे रोकें?',
+    'जैविक खाद कैसे बनाएं?',
+  ],
+};
 
 const Chat = () => {
+  const { language } = useLanguage();
   const [messages, setMessages] = useState([
     {
-      text: 'Hello! I am your AI Agriculture Assistant. Ask me any farming question — I\'ll give you practical advice in simple English/Hindi.',
+      text: language === 'hi'
+        ? 'नमस्ते! मैं आपका AI कृषि सहायक हूँ। मुझसे कोई भी खेती का सवाल पूछें — मैं आपको सरल हिंदी में व्यावहारिक सलाह दूँगा। 🌾'
+        : 'Hello! I am your AI Agriculture Assistant. Ask me any farming question — I\'ll give you practical advice in simple English/Hindi.',
       isUser: false,
     },
   ]);
@@ -28,6 +42,7 @@ const Chat = () => {
   const messagesEndRef = useRef(null);
   const inputRef = useRef(null);
   const { isListening, transcript, startListening, stopListening, setTranscript } = useVoiceInput();
+  const { isSpeaking, currentUtteranceId, speak, stop } = useTextToSpeech();
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -49,13 +64,14 @@ const Chat = () => {
     setLoading(true);
 
     try {
-      const res = await aiChat(userMessage);
-      setMessages((prev) => [...prev, { text: res.data.data.message, isUser: false }]);
+      const res = await aiChat(userMessage, language);
+      const aiMsg = res.data.data.message;
+      setMessages((prev) => [...prev, { text: aiMsg, isUser: false }]);
     } catch (err) {
-      toast.error('Failed to get response. Please try again.');
+      toast.error(language === 'hi' ? 'जवाब प्राप्त करने में विफल। कृपया पुनः प्रयास करें।' : 'Failed to get response. Please try again.');
       setMessages((prev) => [
         ...prev,
-        { text: 'Sorry, something went wrong. Please try again. 🙏', isUser: false },
+        { text: language === 'hi' ? 'क्षमा करें, कुछ गलत हो गया। कृपया पुनः प्रयास करें। 🙏' : 'Sorry, something went wrong. Please try again. 🙏', isUser: false },
       ]);
     } finally {
       setLoading(false);
@@ -69,6 +85,10 @@ const Chat = () => {
     }
   };
 
+  const handleVoiceStart = () => {
+    startListening(language);
+  };
+
   return (
     <div className="flex flex-col h-[calc(100vh-3.5rem)] lg:h-screen max-w-4xl mx-auto p-3 sm:p-4">
       {/* Header */}
@@ -77,19 +97,35 @@ const Chat = () => {
           <GiWheat className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
         </div>
         <div className="min-w-0">
-          <h1 className="text-base sm:text-lg font-bold text-surface-900">AI Farm Chat</h1>
-          <p className="text-xs text-surface-400">Ask any farming question</p>
+          <h1 className="text-base sm:text-lg font-bold text-surface-900">
+            {language === 'hi' ? 'AI कृषि चैट' : 'AI Farm Chat'}
+          </h1>
+          <p className="text-xs text-surface-400">
+            {language === 'hi' ? 'कोई भी खेती का सवाल पूछें' : 'Ask any farming question'}
+          </p>
         </div>
-        <div className="ml-auto flex items-center gap-1.5 flex-shrink-0">
-          <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
-          <span className="text-xs text-surface-400 hidden sm:inline">Online</span>
+        <div className="ml-auto flex items-center gap-2 sm:gap-3 flex-shrink-0">
+          <LanguageSelector />
+          <div className="flex items-center gap-1.5">
+            <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
+            <span className="text-xs text-surface-400 hidden sm:inline">
+              {language === 'hi' ? 'ऑनलाइन' : 'Online'}
+            </span>
+          </div>
         </div>
       </div>
 
       {/* Messages area */}
       <div className="flex-1 overflow-y-auto py-3 sm:py-4 space-y-3 sm:space-y-4">
         {messages.map((msg, i) => (
-          <MessageBubble key={i} message={msg.text} isUser={msg.isUser} />
+          <MessageBubble
+            key={i}
+            message={msg.text}
+            isUser={msg.isUser}
+            onSpeak={!msg.isUser ? () => speak(msg.text, language, `chat-${i}`) : undefined}
+            onStopSpeak={stop}
+            isSpeaking={isSpeaking && currentUtteranceId === `chat-${i}`}
+          />
         ))}
         {loading && (
           <div className="flex gap-2 sm:gap-3">
@@ -111,7 +147,7 @@ const Chat = () => {
           animate={{ opacity: 1, y: 0 }}
           className="flex flex-wrap gap-1.5 sm:gap-2 pb-2 sm:pb-3"
         >
-          {suggestedQuestions.map((q, i) => (
+          {(suggestedQuestions[language] || suggestedQuestions.en).map((q, i) => (
             <button
               key={i}
               onClick={() => sendMessage(q)}
@@ -132,13 +168,13 @@ const Chat = () => {
             className="flex items-center gap-2 text-red-500 text-xs mb-2"
           >
             <div className="w-2 h-2 rounded-full bg-red-500 animate-pulse" />
-            Listening... speak in Hindi
+            {language === 'hi' ? 'सुन रहा है... हिंदी में बोलें' : 'Listening... speak in English'}
           </motion.div>
         )}
         <div className="flex items-end gap-2">
           <VoiceButton
             isListening={isListening}
-            onStart={startListening}
+            onStart={handleVoiceStart}
             onStop={stopListening}
           />
           <div className="flex-1 min-w-0">
@@ -148,7 +184,7 @@ const Chat = () => {
               value={input}
               onChange={(e) => setInput(e.target.value)}
               onKeyDown={handleKeyDown}
-              placeholder="Type your question here..."
+              placeholder={language === 'hi' ? 'यहाँ अपना सवाल लिखें...' : 'Type your question here...'}
               rows={1}
               className="w-full px-3 sm:px-4 py-2.5 sm:py-3 bg-white border border-surface-200 rounded-xl resize-none focus:outline-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500 text-sm transition-all"
               style={{ maxHeight: '120px' }}

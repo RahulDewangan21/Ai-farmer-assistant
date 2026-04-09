@@ -7,7 +7,7 @@ export const chat = async (req, res) => {
     console.log("REQ BODY:", req.body);
     console.log("USER:", req.user);
 
-    const { message } = req.body;
+    const { message, language } = req.body;
 
     if (!message || !message.trim()) {
       return res.status(400).json({
@@ -16,7 +16,7 @@ export const chat = async (req, res) => {
       });
     }
 
-    const aiResponse = await chatWithGemini(message);
+    const aiResponse = await chatWithGemini(message, language || 'en');
 
     // Save only if user exists
     if (req.user?._id) {
@@ -47,13 +47,13 @@ export const chat = async (req, res) => {
 // POST /api/ai/image
 export const analyzeImage = async (req, res) => {
   try {
-    const { image, mimeType } = req.body;
+    const { image, mimeType, language } = req.body;
 
     if (!image) {
       return res.status(400).json({ success: false, message: 'Image is required.' });
     }
 
-    const aiResponse = await analyzeImageWithGemini(image, mimeType || 'image/jpeg');
+    const aiResponse = await analyzeImageWithGemini(image, mimeType || 'image/jpeg', language || 'en');
 
     // Save to history
     await History.create({

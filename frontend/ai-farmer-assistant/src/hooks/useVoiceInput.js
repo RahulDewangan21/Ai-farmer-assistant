@@ -5,7 +5,7 @@ const useVoiceInput = () => {
   const [transcript, setTranscript] = useState('');
   const recognitionRef = useRef(null);
 
-  const startListening = useCallback(() => {
+  const startListening = useCallback((language = 'hi') => {
     if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
       alert('Speech Recognition not supported in this browser. Please use Chrome browser.');
       return;
@@ -14,7 +14,8 @@ const useVoiceInput = () => {
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
     const recognition = new SpeechRecognition();
 
-    recognition.lang = 'hi-IN';
+    // Set recognition language based on param
+    recognition.lang = language === 'hi' ? 'hi-IN' : 'en-IN';
     recognition.continuous = false;
     recognition.interimResults = true;
 

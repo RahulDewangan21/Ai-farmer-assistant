@@ -8,7 +8,7 @@ import {
   HiOutlineClock,
   HiOutlineChevronRight,
 } from 'react-icons/hi2';
-import { GiWheat, GiFarmer } from 'react-icons/gi';
+import { GiWheat, GiFarmer, GiPlantSeed } from 'react-icons/gi';
 
 const quickActions = [
   {
@@ -34,6 +34,14 @@ const quickActions = [
     icon: HiOutlineSun,
     gradient: 'from-yellow-400 to-orange-500',
     shadow: 'shadow-yellow-500/10',
+  },
+  {
+    path: '/crop-advisory',
+    label: 'Crop Advisory',
+    desc: 'Get crop advice based on weather & season',
+    icon: GiPlantSeed,
+    gradient: 'from-emerald-400 to-teal-600',
+    shadow: 'shadow-emerald-500/10',
   },
   {
     path: '/history',
@@ -129,7 +137,7 @@ const Dashboard = () => {
           {[
             { value: '24/7', label: 'Always Available' },
             { value: 'English/Hindi', label: 'Language Support' },
-            { value: 'Voice Input', label: 'Speak your question' },
+            { value: 'Voice Input/Output', label: 'Speak your question and get voice response' },
           ].map((stat, i) => (
             <div key={i} className="text-center p-2 sm:p-3 bg-surface-50 rounded-xl">
               <p className="text-lg sm:text-2xl font-bold gradient-text">{stat.value}</p>

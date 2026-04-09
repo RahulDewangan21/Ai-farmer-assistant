@@ -30,11 +30,11 @@ api.interceptors.response.use(
 
 // ========== API Functions ==========
 
-export const aiChat = (message) =>
-  api.post('/ai/chat', { message });
+export const aiChat = (message, language = 'en') =>
+  api.post('/ai/chat', { message, language });
 
-export const aiImageAnalysis = (image, mimeType) =>
-  api.post('/ai/image', { image, mimeType });
+export const aiImageAnalysis = (image, mimeType, language = 'en') =>
+  api.post('/ai/image', { image, mimeType, language });
 
 export const getHistory = (params) =>
   api.get('/history', { params });
@@ -48,7 +48,10 @@ export const clearAllHistory = () =>
 export const getWeather = (city) =>
   api.get(`/weather/${city}`);
 
-export const getWeatherAdvice = (city) =>
-  api.post('/weather/advice', { city });
+export const getWeatherAdvice = (city, language = 'en') =>
+  api.post('/weather/advice', { city, language });
+
+export const getCropAdvisory = (city, language = 'en') =>
+  api.post('/weather/crop-advisory', { city, language });
 
 export default api;
