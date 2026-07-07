@@ -50,7 +50,7 @@ An AI-powered web application built with the **MERN Stack** that helps farmers m
 * cd backend
 * npm run dev
 -> Start Frontend
-* cd frontend
+* cd frontend/ai-farmer-assistant
 * npm run dev
 
 
