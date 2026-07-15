@@ -28,7 +28,7 @@ An AI-powered web application built with the **MERN Stack** that helps farmers m
 * React Router DOM
 * Axios
 
-### Backend
+### Backend Part
 
 * Node.js
 * Express.js
